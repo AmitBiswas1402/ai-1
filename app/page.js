@@ -1,13 +1,13 @@
 "use client"
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes"
+import ChatInputBox from "./_components/ChatInputBox";
 
 const Home = () => {
   const {setTheme} = useTheme();
   return (
     <div>
-      <Button onClick={() => setTheme('dark')}>Dark Mode</Button>
-      <Button onClick={() => setTheme('light')}>Light Mode</Button>
+      <ChatInputBox />
     </div>
   )
 }

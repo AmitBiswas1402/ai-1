@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { SidebarProvider, SidebarTrigger } from "./ui/sidebar";
+import { SidebarProvider } from "./ui/sidebar";
 import { AppSidebar } from "@/app/_components/AppSidebar";
+import AppHeader from "@/app/_components/AppHeader";
 
 export function ThemeProvider({ children, ...props }) {
   return (
@@ -16,8 +17,10 @@ export function ThemeProvider({ children, ...props }) {
     >
       <SidebarProvider>
         <AppSidebar />
-        <SidebarTrigger />
-        <div>{children}</div>
+        <div className="w-full">
+          <AppHeader />
+          {children}
+        </div>
       </SidebarProvider>
     </NextThemesProvider>
   );
