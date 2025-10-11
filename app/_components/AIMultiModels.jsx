@@ -67,11 +67,11 @@ const AIMultiModels = () => {
               )}
             </div>
           </div>
-          {model.premium && model.enable && (
+          {/* {model.premium && model.enable && (
             <div className="flex items-center justify-center h-full">
               <Button><Lock /> Upgrade to unlock</Button>
             </div>
-          )}
+          )} */}
         </div>
       ))}
     </div>
