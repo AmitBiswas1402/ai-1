@@ -23,7 +23,7 @@ const ChatInputBox = () => {
               <Paperclip className="h-5 w-5" />
             </Button>
             <div>
-              <Button variant={"ghost"} size={"icon"}>
+              <Button variant={"ghost"} size={"icon"} className={'mr-2'}>
                 <Mic />
               </Button>
               <Button size={"icon"} className={"bg-purple-600"}>
