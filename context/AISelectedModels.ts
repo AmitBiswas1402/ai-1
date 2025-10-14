@@ -1,5 +1,4 @@
 import { createContext } from "react";
-import { DefaultModel } from "@/shared/AIModelsShared";
 
 export interface AIModelsType {
   GPT: { modelId: string };
@@ -11,9 +10,20 @@ export interface AIModelsType {
   Llama: { modelId: string };
 }
 
-interface AISelectedModelContextType {
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  model?: string;
+  loading?: boolean;
+}
+
+export type MessagesType = Record<string, ChatMessage[]>;
+
+export interface AISelectedModelContextType {
   aiSelectedModels: AIModelsType;
   setAiSelectedModels: React.Dispatch<React.SetStateAction<AIModelsType>>;
+  messages: MessagesType;
+  setMessages: React.Dispatch<React.SetStateAction<MessagesType>>;
 }
 
 export const AISelectedModelContext = createContext<AISelectedModelContextType | undefined>(

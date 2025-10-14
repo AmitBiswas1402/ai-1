@@ -12,6 +12,7 @@ import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import UsageCreditBar from "./UsageCreditBar";
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme();
@@ -52,10 +53,17 @@ export function AppSidebar() {
               </Button>
             )}
           </div>
-
-          <Button className="mt-7 w-full" size="lg">
-            + New Chat
-          </Button>
+          {user ? (
+            <Button className="mt-7 w-full" size="lg">
+              + New Chat
+            </Button>
+          ) : (
+            <SignInButton>
+              <Button className="mt-7 w-full" size="lg">
+                + New Chat
+              </Button>
+            </SignInButton>
+          )}
         </div>
       </SidebarHeader>
 
@@ -85,19 +93,22 @@ export function AppSidebar() {
               </Button>
             </SignInButton>
           ) : (
-            <div className="flex items-center justify-between w-full border rounded-lg px-3 py-2">
-              <div className="flex items-center gap-2">
-                <UserButton
-                  afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      userButtonAvatarBox: "w-8 h-8",
-                    },
-                  }}
-                />
-                <span className="text-sm font-medium">
-                  {user?.fullName || "User"}
-                </span>
+            <div>
+              <UsageCreditBar />
+              <div className="flex items-center justify-between w-full border rounded-lg px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <UserButton
+                    afterSignOutUrl="/"
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: "w-8 h-8",
+                      },
+                    }}
+                  />
+                  <span className="text-sm font-medium">
+                    {user?.fullName || "User"}
+                  </span>
+                </div>
               </div>
             </div>
           )}

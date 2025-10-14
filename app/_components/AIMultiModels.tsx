@@ -1,28 +1,35 @@
 "use client";
 
-import AIModelsList, { AIModel, SubModel } from "../../shared/AIModelsList";
+import AIModelsList, { AIModel } from "../../shared/AIModelsList";
 import Image from "next/image";
 import { useContext, useState } from "react";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { MessageSquare } from "lucide-react";
+import { Lock, LockIcon, MessageSquare } from "lucide-react";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/config/FirebaseDB";
 import { useUser } from "@clerk/nextjs";
-import { AISelectedModelContext, AIModelsType } from "@/context/AISelectedModels";
+import {
+  AISelectedModelContext,
+  AIModelsType,
+} from "@/context/AISelectedModels";
+import { Button } from "@/components/ui/button";
 
 const AIMultiModels = () => {
   const { user } = useUser();
   const [aiModelList, setAiModelList] = useState<AIModel[]>(AIModelsList);
 
   const context = useContext(AISelectedModelContext);
-  if (!context) throw new Error("AISelectedModelContext must be used within a provider");
+  if (!context)
+    throw new Error("AISelectedModelContext must be used within a provider");
 
   const { aiSelectedModels, setAiSelectedModels } = context;
 
@@ -34,7 +41,10 @@ const AIMultiModels = () => {
   };
 
   // Handle model selection and sync to Firestore
-  const onSelectValue = async (parentModel: keyof AIModelsType, value: string) => {
+  const onSelectValue = async (
+    parentModel: keyof AIModelsType,
+    value: string
+  ) => {
     if (!user) return;
 
     const userDocRef = doc(db, "users", user.id);
@@ -82,23 +92,55 @@ const AIMultiModels = () => {
 
               {model.enable && (
                 <Select
-                  defaultValue={aiSelectedModels[model.model as keyof AIModelsType]?.modelId}
-                  onValueChange={(value) => onSelectValue(model.model as keyof AIModelsType, value)}
+                  defaultValue={
+                    aiSelectedModels[model.model as keyof AIModelsType]?.modelId
+                  }
+                  onValueChange={(value) =>
+                    onSelectValue(model.model as keyof AIModelsType, value)
+                  }
+                  disabled={model.premium}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue
                       placeholder={
-                        aiSelectedModels[model.model as keyof AIModelsType]?.modelId ||
+                        aiSelectedModels[model.model as keyof AIModelsType]
+                          ?.modelId ||
+                        model.subModel[0]?.name ||
                         "Select a Model"
                       }
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    {model.subModel.map((subModel: SubModel, subIndex: number) => (
-                      <SelectItem key={subIndex} value={subModel.name}>
-                        {subModel.name}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup className="px-3">
+                      <SelectLabel className="text-sm text-gray-400">
+                        Free
+                      </SelectLabel>
+                      {model.subModel.map(
+                        (subModel, i) =>
+                          subModel.premium == false && (
+                            <SelectItem key={i} value={subModel.id}>
+                              {subModel.name}
+                            </SelectItem>
+                          )
+                      )}
+                    </SelectGroup>
+                    <SelectGroup className="px-3">
+                      <SelectLabel className="text-sm text-gray-400">
+                        Premium
+                      </SelectLabel>
+                      {model.subModel.map(
+                        (subModel, i) =>
+                          subModel.premium == true && (
+                            <SelectItem
+                              key={i}
+                              value={subModel.id}
+                              disabled={subModel.premium}
+                            >
+                              {subModel.name} <LockIcon />
+                            </SelectItem>
+                          )
+                      )}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               )}
@@ -108,7 +150,9 @@ const AIMultiModels = () => {
               {model.enable ? (
                 <Switch
                   checked={model.enable}
-                  onCheckedChange={(v: boolean) => onToggleChange(model.model, v)}
+                  onCheckedChange={(v: boolean) =>
+                    onToggleChange(model.model, v)
+                  }
                 />
               ) : (
                 <MessageSquare
@@ -118,6 +162,14 @@ const AIMultiModels = () => {
               )}
             </div>
           </div>
+          {model.premium && model.enable && (
+            <div className="flex items-center justify-center h-full">
+              <Button>
+                {" "}
+                <Lock /> Upgrade to unlock
+              </Button>
+            </div>
+          )}
         </div>
       ))}
     </div>
