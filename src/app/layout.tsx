@@ -3,6 +3,7 @@ import "./globals.css";
 
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import Provider from "./provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,7 +38,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <body className="min-h-full flex flex-col" suppressHydrationWarning>
-          {children}
+          <Provider>{children}</Provider>
         </body>
       </html>
     </ClerkProvider>
