@@ -32,7 +32,10 @@ export async function PUT(req: NextRequest) {
       designCode,
     })
     .where(
-      and(eq(frameTable.frameId, frameId), eq(frameTable.projectId, projectId))
+      and(
+        eq(frameTable.frameId, String(frameId)),
+        eq(frameTable.projectId, projectId)
+      )
     );
 
   return NextResponse.json({ result: "Updated!" });
