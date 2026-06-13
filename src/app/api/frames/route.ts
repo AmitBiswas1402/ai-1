@@ -6,18 +6,27 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const frameId = searchParams.get("frameId");
-//   const projectId = searchParams.get("projectId");
+
+  if (!frameId) {
+    return NextResponse.json({ error: "frameId is required" }, { status: 400 });
+  }
+
+  const frameIdStr = String(frameId);
 
   const [frameResult, chatResult] = await Promise.all([
-    // @ts-ignore
-    db.select().from(frameTable).where(eq(frameTable.frameId, frameId)),
-    // @ts-ignore
-    db.select().from(chatTable).where(eq(chatTable.frameId, frameId)),
+    db.select().from(frameTable).where(eq(frameTable.frameId, frameIdStr)),
+    db.select().from(chatTable).where(eq(chatTable.frameId, frameIdStr)),
   ]);
 
+  if (!frameResult.length && !chatResult.length) {
+    return NextResponse.json({ error: "Frame not found" }, { status: 404 });
+  }
+
   const finalResult = {
-    ...frameResult[0],
-    chatMessages: chatResult[0]?.chatMessage,
+    frameId: frameIdStr,
+    designCode: frameResult[0]?.designCode ?? null,
+    projectId: frameResult[0]?.projectId ?? null,
+    chatMessages: chatResult[0]?.chatMessage ?? [],
   };
 
   return NextResponse.json(finalResult);

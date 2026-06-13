@@ -24,13 +24,30 @@ export async function POST(req: NextRequest) {
       .limit(1);
 
     if (!existingUser.length) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      await db.insert(usersTable).values({
+        name: user?.fullName ?? "NA",
+        email: email!,
+        credits: 100,
+      });
+    } else {
+      const currentCredits = existingUser[0].credits ?? 0;
+      if (currentCredits <= 0) {
+        return NextResponse.json({ error: "Insufficient credits" }, { status: 403 });
+      }
     }
 
-    const currentCredits = existingUser[0].credits ?? 0;
-    if (currentCredits <= 0) {
-      return NextResponse.json({ error: "Insufficient credits" }, { status: 403 });
-    }
+    const userRecord = existingUser.length
+      ? existingUser[0]
+      : (
+          await db
+            .select()
+            .from(usersTable)
+            //@ts-ignore
+            .where(eq(usersTable.email, email))
+            .limit(1)
+        )[0];
+
+    const currentCredits = userRecord.credits ?? 0;
 
     // ✅ Create project entry
     await db.insert(projectTable).values({
@@ -40,14 +57,14 @@ export async function POST(req: NextRequest) {
 
     // ✅ Create frame entry
     await db.insert(frameTable).values({
-      frameId,
+      frameId: String(frameId),
       projectId,
     });
 
     // ✅ Store chat messages
     await db.insert(chatTable).values({
       chatMessage: messages,
-      frameId,
+      frameId: String(frameId),
       createdBy: email,
     });
 
