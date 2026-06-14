@@ -1,10 +1,10 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import { UserDetailContext } from "@/context/UserDetailContext";
-import { OnSaveContext } from "@/context/OnSaveContext";
+import { OnSaveContext, type DesignHtmlGetter } from "@/context/OnSaveContext";
 
 type UserDetail = {
   id?: number;
@@ -18,36 +18,59 @@ const Provider = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const { user } = useUser();
+  const { isLoaded, user } = useUser();
   const [userDetails, setUserDetails] = useState<UserDetail | undefined>();
   const [onSaveDate, setOnSaveDate] = useState<Date | null>(null);
+  const designHtmlGetterRef = useRef<DesignHtmlGetter | null>(null);
 
-  async function CreateNewUser() {
-    try {
-      const result = await axios.post<{ user: UserDetail }>("/api/users", {});
-      console.log("API response:", result.data);
-      setUserDetails(result.data.user);
-    } catch (error: unknown) {
-      const axiosError = error as AxiosError;
-      console.error("API call failed:", axiosError.response?.data || axiosError.message);
-    }
-  }
+  const setDesignHtmlGetter = (getter: DesignHtmlGetter | null) => {
+    designHtmlGetterRef.current = getter;
+  };
+
+  const getDesignHtml = () => designHtmlGetterRef.current?.() ?? null;
 
   useEffect(() => {
-    if (user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      CreateNewUser();
-    }
+    user && CreateUser();
+    // if (!isLoaded) {
+    //   return;
+    // }
+
+    // if (!user) {
+    //   setUserDetails(undefined);
+    //   return;
+    // }
+
+    // const syncUser = async () => {
+    //   try {
+    //     const result = await axios.post<{ user: UserDetail }>("/api/users");
+    //     setUserDetails(result.data.user);
+    //   } catch (error) {
+    //     console.error("Failed to sync user:", error);
+    //   }
+    // };
+
+    // void syncUser();
+  // }, [isLoaded, user?.id]);
   }, [user]);
+  
+  const CreateUser = async () => {
+    const result = await axios.post('/api/users', {
+            
+    });
+    // console.log(result.data);
+    setUserDetails(result.data?.user);
+  }
 
   return (
-    <div>
+    <>
       <UserDetailContext.Provider value={{ userDetails, setUserDetails }}>
-        <OnSaveContext.Provider value={{ onSaveDate, setOnSaveDate }}>
+        <OnSaveContext.Provider
+          value={{ onSaveDate, setOnSaveDate, setDesignHtmlGetter, getDesignHtml }}
+        >
           {children}
         </OnSaveContext.Provider>
       </UserDetailContext.Provider>
-    </div>
+    </>
   );
 };
 

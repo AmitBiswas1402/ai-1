@@ -3,11 +3,11 @@ export function extractHtmlContent(raw: string | null | undefined): string {
 
   let content = raw.trim();
 
-  const htmlBlockMatch = content.match(/```html\s*([\s\S]*?)```/i);
+  const htmlBlockMatch = content.match(/```html\s*([\s\S]*?)(?:```|$)/i);
   if (htmlBlockMatch) {
     content = htmlBlockMatch[1].trim();
   } else {
-    const codeBlockMatch = content.match(/```\s*([\s\S]*?)```/);
+    const codeBlockMatch = content.match(/```\s*([\s\S]*?)(?:```|$)/);
     if (codeBlockMatch) {
       content = codeBlockMatch[1].trim();
     } else {
