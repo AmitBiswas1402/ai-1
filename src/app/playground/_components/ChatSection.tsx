@@ -27,9 +27,9 @@ const ChatSection = ({ messages, onSend, loading }: Props) => {
   };
 
   return (
-    <div className="p-4 w-96 h-[91vh] shadow flex flex-col">
+    <div className="flex h-full w-80 shrink-0 flex-col border-r shadow-sm lg:w-96">
       {/* messages section */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col">
+      <div className="flex min-h-0 flex-1 flex-col space-y-4 overflow-y-auto p-4">
         {messages.length === 0 && !loading ? (
           <p className="text-gray-500">No messages yet.</p>
         ) : (

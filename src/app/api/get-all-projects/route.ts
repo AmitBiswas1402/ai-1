@@ -29,7 +29,11 @@ export async function GET(req: NextRequest) {
 
   // ── Query 2: all frames for all those projects (single batch) ─────────────
   const allFrames = await db
-    .select({ frameId: frameTable.frameId, projectId: frameTable.projectId })
+    .select({
+      frameId: frameTable.frameId,
+      projectId: frameTable.projectId,
+      designCode: frameTable.designCode,
+    })
     .from(frameTable)
     //@ts-ignore
     .where(inArray(frameTable.projectId, projectIds));
@@ -64,6 +68,7 @@ export async function GET(req: NextRequest) {
   const results: {
     projectId: string;
     frameId: string;
+    designCode: string | null;
     chats: any[];
   }[] = [];
 
@@ -75,6 +80,7 @@ export async function GET(req: NextRequest) {
       results.push({
         projectId: pid,
         frameId: fid,
+        designCode: frame.designCode ?? null,
         chats: chatsByFrameId.get(fid) ?? [],
       });
     }

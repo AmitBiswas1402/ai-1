@@ -158,3 +158,25 @@
 @utility animate-preview-shimmer {
   animation: preview-shimmer 2s ease-in-out infinite;
 }
+
+@keyframes scroll-hint {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateY(4px);
+  }
+}
+
+@utility animate-scroll-hint {
+  animation: scroll-hint 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
