@@ -13,6 +13,7 @@ import { toast } from "sonner";
 export type Messages = {
   role: string;
   content: string;
+  image?: string;
 };
 
 const DesignInstructions = `
@@ -117,10 +118,17 @@ const Project = () => {
         apiMessages.push({ role: msg.role, content: msg.content });
       }
 
+      const lastUserWithImage = [...currentMessages]
+        .reverse()
+        .find((m) => m.role === "user" && m.image);
+
       const response = await fetch("/api/ai-model", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiMessages }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          imageUrl: lastUserWithImage?.image,
+        }),
       });
 
       if (!response.ok) {

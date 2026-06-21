@@ -18,7 +18,7 @@ const Provider = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const { isLoaded, user } = useUser();
+  const { user } = useUser();
   const [userDetails, setUserDetails] = useState<UserDetail | undefined>();
   const [onSaveDate, setOnSaveDate] = useState<Date | null>(null);
   const designHtmlGetterRef = useRef<DesignHtmlGetter | null>(null);
@@ -31,32 +31,10 @@ const Provider = ({
 
   useEffect(() => {
     user && CreateUser();
-    // if (!isLoaded) {
-    //   return;
-    // }
-
-    // if (!user) {
-    //   setUserDetails(undefined);
-    //   return;
-    // }
-
-    // const syncUser = async () => {
-    //   try {
-    //     const result = await axios.post<{ user: UserDetail }>("/api/users");
-    //     setUserDetails(result.data.user);
-    //   } catch (error) {
-    //     console.error("Failed to sync user:", error);
-    //   }
-    // };
-
-    // void syncUser();
-  // }, [isLoaded, user?.id]);
   }, [user]);
   
   const CreateUser = async () => {
-    const result = await axios.post('/api/users', {
-            
-    });
+    const result = await axios.post('/api/users', {});
     // console.log(result.data);
     setUserDetails(result.data?.user);
   }
