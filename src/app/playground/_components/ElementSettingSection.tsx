@@ -77,9 +77,14 @@ const ElementSettingSection = ({ selectedEl, clearSelection }: Props) => {
   return (
     <div className="flex h-full w-80 shrink-0 flex-col space-y-4 overflow-auto rounded-r-2xl border-l bg-card p-4 shadow-lg">
       <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <button
+          type="button"
+          onClick={clearSelection}
+          className="flex items-center gap-2 text-sm font-semibold text-foreground transition-colors hover:text-muted-foreground"
+          title="Click to deselect"
+        >
           Element Settings
-        </h2>
+        </button>
         <Button
           variant="ghost"
           size="icon-sm"

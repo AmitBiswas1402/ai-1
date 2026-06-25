@@ -172,10 +172,12 @@ const CodeSandboxWorkSpace = ({ generatedCode }: Props) => {
         e.preventDefault();
         e.stopPropagation();
 
-        if (
-          selectedElRef.current &&
-          selectedElRef.current !== target
-        ) {
+        if (selectedElRef.current === target) {
+          clearSelection();
+          return;
+        }
+
+        if (selectedElRef.current && selectedElRef.current !== target) {
           selectedElRef.current.style.outline = "";
           selectedElRef.current.removeAttribute("contenteditable");
         }
