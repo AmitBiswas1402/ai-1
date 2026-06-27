@@ -32,7 +32,7 @@ const ProjectsSection = () => {
       id="projects-section"
       className="relative -mt-6 snap-start rounded-t-[2rem] border-t bg-muted/40 px-4 py-8 pb-20 shadow-[0_-16px_48px_-20px_rgba(0,0,0,0.1)]"
     >
-      <div className="mx-auto max-w-[1400px]">
+      <div className="mx-auto max-w-350">
         <ScrollReveal>
           <div className="mb-5 flex items-center gap-4">
             <Link href="/" className="text-lg font-bold">
