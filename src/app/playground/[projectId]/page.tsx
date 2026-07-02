@@ -58,7 +58,9 @@ RULES:
 - Include interactive elements where appropriate: dropdowns, accordions, tabs, modals, sliders.
 - Initialize Flowbite components, Lucide icons, Swiper, Chart.js, AOS, and Tippy in inline <script> blocks at the end of the output when used.
 - Each section should be self-contained unless the user explicitly ties them together.
-- Code must be production-ready, visually polished, and professionally structured.`;
+- Code must be production-ready, visually polished, and professionally structured.
+- IMAGE ANALYSIS & REFERENCE: If the user provides a reference image (e.g., a wireframe, mock-up design, drawing, or screenshot of a website), analyze its visual styling, layout structure, branding, navigation header, color scheme, sections, components (such as hero banner, feature grids, cards), and typography. Recreate the design shown in the image as closely as possible, using high-fidelity modern styles with Tailwind CSS and Flowbite, while respecting any additional instructions in the user's text query.
+- WEBSITE CLONING: If the prompt includes scraped website content (HTML and page text) and asks you to clone/recreate it, analyze the target website's sections, text, navigation flow, and structural layout. Generate a modernized, premium frontend implementation using Tailwind CSS and Flowbite. If a preview/OpenGraph image is supplied, analyze its visual styling (such as branding, colors, grid layouts, component cards, and navigation header layout) and replicate those visual elements closely while elevating the quality to modern, high-fidelity standards.`;
 
 const Project = () => {
   const { projectId } = useParams();
@@ -252,8 +254,26 @@ const Project = () => {
     }
   }, [frameId, messages, generatedCode, projectId, saveContext]);
 
-  const SendMessage = async (userInput: string) => {
-    const userMessage: Messages = { role: "user", content: userInput };
+  const SendMessage = async (userInput: string, imageFile: File | null = null) => {
+    setLoading(true);
+    let imageUrl: string | null = null;
+    try {
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        const uploadRes = await axios.post("/api/images/upload", formData);
+        imageUrl = uploadRes.data.url;
+      }
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast.error("Failed to upload image.");
+    }
+
+    const userMessage: Messages = {
+      role: "user",
+      content: userInput,
+      ...(imageUrl ? { image: imageUrl } : {}),
+    };
     const messagesWithUser = [...messages, userMessage];
 
     setMessages(messagesWithUser);
@@ -275,7 +295,7 @@ const Project = () => {
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <ChatSection
           messages={messages}
-          onSend={(input: string) => SendMessage(input)}
+          onSend={SendMessage}
           loading={loading}
         />
 
